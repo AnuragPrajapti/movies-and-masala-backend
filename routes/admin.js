@@ -125,16 +125,8 @@ adminrouter.put(
         result = await cloudinary.uploader.upload(file.tempFilePath);
       }
       const data = {
-        firstName: req.body.firstName || user.firstName,
-        lastName: req.body.lastName || user.lastName,
+        fullName: req.body.firstName || user.firstName,
         email: req.body.email || user.email,
-        phone: req.body.phone || user.phone,
-        gender: req.body.gender || user.gender,
-        age: req.body.age || user.age,
-        address: req.body.address || user.address,
-        city: req.body.city || user.city,
-        state: req.body.state || user.state,
-        zip: req.body.zip || user.zip,
         image: result?.secure_url || user.image,
         cloudinary_id: result?.public_id || user.cloudinary_id,
       };

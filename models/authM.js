@@ -19,6 +19,14 @@ const authSchema = new mongoose.Schema(
     image : {
       type: String,
     },
+    isAdmin :{
+      type : Boolean,
+      default : false,
+    },
+    isVarified:{
+      type: Number,
+      default: 0
+    }
   },
   { versionKey: false }
 );
