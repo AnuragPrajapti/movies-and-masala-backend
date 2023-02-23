@@ -89,25 +89,24 @@ adminrouter.post("/admin/login", async (req, res) => {
 
 //REGISTER ADMIN DETAILS FIND HELP OF TOKEN
 adminrouter.get("/adminProfile", [checkauth, adminauth], async (req, res) => {
-  try {
+
+  // try {
     const user = await Auth.find({ _id: req.user._id });
 
     if (user) {
       const data = {
         _id: req.user._id,
-        image: result.secure_url,
-        fullName: req.body.firstName,
-        email: req.body.email,
-        password: spassword,
-        cPassword: spassword,
+        fullName: req.user.fullName,
+        email: req.user.email,
+        image: req.user.image,
       };
       res.status(200).send({ success: "Admin Details....", data });
     } else {
       res.status(400).send({ error: "not found admin detail" });
     }
-  } catch (err) {
-    res.status(400).send({ error: "user not found please try again" });
-  }
+  // } catch (err) {
+  //   res.status(400).send({ error: "user not found please try again" });
+  // }
 });
 
 //UPDATE ADMIN DETAILS................................
@@ -125,8 +124,16 @@ adminrouter.put(
         result = await cloudinary.uploader.upload(file.tempFilePath);
       }
       const data = {
-        fullName: req.body.firstName || user.firstName,
+        firstName: req.body.firstName || user.firstName,
+        lastName: req.body.lastName || user.lastName,
         email: req.body.email || user.email,
+        phone: req.body.phone || user.phone,
+        gender: req.body.gender || user.gender,
+        age: req.body.age || user.age,
+        address: req.body.address || user.address,
+        city: req.body.city || user.city,
+        state: req.body.state || user.state,
+        zip: req.body.zip || user.zip,
         image: result?.secure_url || user.image,
         cloudinary_id: result?.public_id || user.cloudinary_id,
       };
