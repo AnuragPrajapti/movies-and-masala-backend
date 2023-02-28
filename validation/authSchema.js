@@ -10,7 +10,7 @@ const schema = {
       .string()
       .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
       .required(),
-      confirmPassword: joi
+    confirmPassword: joi
       .any()
       .equal(joi.ref("password"))
       .required()

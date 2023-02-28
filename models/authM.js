@@ -42,6 +42,6 @@ authSchema.methods.generateTokens = async function () {
   return token;
 };
 
-const Auth = mongoose.model("eLerningPlateform", authSchema);
+const Auth = mongoose.model("movies-masala-app", authSchema);
 
 export default Auth;
