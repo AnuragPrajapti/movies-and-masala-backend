@@ -161,7 +161,7 @@ authrouter.post("/register", adduservali, async (req, res) => {
       const files = new Auth({
         image: result.secure_url,
         cloudinary_id: result.public_id,
-        fullName: req.body.firstName,
+        fullName: req.body.fullName,
         email: req.body.email,
         password: spassword,
         confirmPassword: spassword,
@@ -227,7 +227,7 @@ authrouter.get("/user/:id", checkauth, async (req, res) => {
     const data = await Auth.findById(_id);
 
     (data.password = undefined),
-      (data.cPassword = undefined),
+      (data.confirmPassword = undefined),
       (data.isVarified = undefined),
       (data.isAdmin = undefined);
 
