@@ -68,9 +68,6 @@ adminrouter.post("/admin/login", async (req, res) => {
         );
 
         const token = await userdata.generateTokens();
-
-        // console.log(token);
-
         const date = moment().format("L");
 
         let Id = userdata._id;
