@@ -48,7 +48,7 @@ const createtoken = async (id, res) => {
   }
 };
 //verify mail register time start
-const sentverifymail = async (firstName, email, user_id) => {
+const sentverifymail = async (fullName, email, user_id) => {
   try {
     const transporter = nodemailer.createTransport({
       port: 465, // true for 465, false for other ports
@@ -65,7 +65,7 @@ const sentverifymail = async (firstName, email, user_id) => {
       subject: "for email varifiaction",
       html:
         "<p> hii " +
-        firstName +
+        fullName +
         ', please click to verify <a href="  https://sfddfsd.herokuapp.com/verify?id=' +
         user_id +
         '">verify</a>your mail</p>',
@@ -81,7 +81,6 @@ const sentverifymail = async (firstName, email, user_id) => {
 
 // verify time mail sent
 const verify = async (email) => {
-  // console.log(data);
 
   const transporter = nodemailer.createTransport({
     port: 465, // true for 465, false for other ports
@@ -113,7 +112,6 @@ authrouter.get("/verify", async (req, res) => {
       { _id: req.query.id },
       { $set: { isVarified: 1 } }
     );
-    console.log(update);
 
     res.status(200).send({ success: "welcome user mail varify" });
 
@@ -165,7 +163,7 @@ authrouter.post("/register", adduservali, async (req, res) => {
         email: req.body.email,
         password: spassword,
         confirmPassword: spassword,
-      }); 
+      });
       const userdata = await Auth.findOne({ email: req.body.email });
 
       if (userdata) {
@@ -233,13 +231,11 @@ authrouter.get("/user/:id", checkauth, async (req, res) => {
 
     res.status(200).send({ status: "success", details: data });
   } catch (error) {
-    res
-      .status(400)
-      .send({
-        status: "Bad Request",
-        details: "",
-        message: "something wrong user not found in data base...",
-      });
+    res.status(400).send({
+      status: "Bad Request",
+      details: "",
+      message: "something wrong user not found in data base...",
+    });
   }
 });
 
@@ -247,16 +243,8 @@ authrouter.get("/user/:id", checkauth, async (req, res) => {
 authrouter.put("/user/update/:id", checkauth, async (req, res) => {
   try {
     const {
-      firstName,
-      lastName,
+      fullName,
       email,
-      phone,
-      gender,
-      age,
-      address,
-      state,
-      zip,
-      city,
     } = req.body;
     const file = req.files.image;
     let user = await Auth.findById(req.params.id);
@@ -268,16 +256,8 @@ authrouter.put("/user/update/:id", checkauth, async (req, res) => {
     }
 
     const data = {
-      firstName,
-      lastName,
+      fullName,
       email,
-      phone,
-      gender,
-      age,
-      address,
-      state,
-      zip,
-      city,
       image: result?.secure_url || user.image,
       cloudinary_id: result?.public_id || user.cloudinary_id,
     };
@@ -285,42 +265,38 @@ authrouter.put("/user/update/:id", checkauth, async (req, res) => {
     user = await Auth.findByIdAndUpdate(req.params.id, data, { new: true });
 
     (user.password = undefined),
-      (user.cPassword = undefined),
+      (user.confirmPassword = undefined),
       (user.isVarified = undefined),
       (user.isAdmin = undefined);
 
     res.status(200).send({ status: "success", updateDetails: user });
   } catch (error) {
-    res
-      .status(400)
-      .send({
-        status: "Bad Request",
-        updateData: "",
-        message: "something wrong user not found...",
-      });
+    res.status(400).send({
+      status: "Bad Request",
+      updateData: "",
+      message: "something wrong user not found...",
+    });
   }
 });
 
-//delete the register user by id..............................................................................................
+//delete the register user by id...................................................................
 authrouter.delete(
   "/user/delete/:id",
   [checkauth, adminauth],
   async (req, res) => {
-    try {
-      let user = await Auth.findById(req.params.id);
+      try {
+      let user = await Auth.findByIdAndDelete(req.params.id);
 
       await cloudinary.uploader.destroy(user.cloudinary_id);
 
       await user.remove();
-      res.status(200).send({ status: "success", user: "deleted successfully" });
+      res.status(200).send({ status: "success", message: "deleted successfully" });
     } catch (error) {
-      res
-        .status(400)
-        .send({
-          status: "Bad Request",
-          deleteData: "",
-          message: "user already deleted...",
-        });
+      res.status(400).send({
+        status: "Bad Request",
+        deleteData: "",
+        message: "user already deleted...",
+      });
     }
   }
 );
