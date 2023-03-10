@@ -285,11 +285,12 @@ authrouter.delete(
   [checkauth, adminauth],
   async (req, res) => {
       try {
-      let user = await Auth.findByIdAndDelete(req.params.id);
+        const id= req.params.id;
+      let user = await Auth.findByIdAndDelete(id);
 
       await cloudinary.uploader.destroy(user.cloudinary_id);
 
-      await user.remove();
+      await user.save();
       res.status(200).send({ status: "success", message: "deleted successfully" });
     } catch (error) {
       res.status(400).send({
