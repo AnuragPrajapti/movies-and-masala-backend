@@ -81,7 +81,6 @@ const sentverifymail = async (fullName, email, user_id) => {
 
 // verify time mail sent
 const verify = async (email) => {
-
   const transporter = nodemailer.createTransport({
     port: 465, // true for 465, false for other ports
     host: "smtp.gmail.com",
@@ -242,10 +241,7 @@ authrouter.get("/user/:id", checkauth, async (req, res) => {
 //update the user register with id...........................................................................................
 authrouter.put("/user/update/:id", checkauth, async (req, res) => {
   try {
-    const {
-      fullName,
-      email,
-    } = req.body;
+    const { fullName, email } = req.body;
     const file = req.files.image;
     let user = await Auth.findById(req.params.id);
     const dis = await cloudinary.uploader.destroy(file.tempFilePath);
@@ -284,20 +280,22 @@ authrouter.delete(
   "/user/delete/:id",
   [checkauth, adminauth],
   async (req, res) => {
-      try {
-        const id= req.params.id;
+    try {
+      const id = req.params.id;
       let user = await Auth.findByIdAndDelete(id);
 
-      await cloudinary.uploader.destroy(user.cloudinary_id);
-
-      await user.save();
-      res.status(200).send({ status: "success", message: "deleted successfully" });
-    }
-     catch (error) {
+      if (user) {
+        return res
+          .status(200)
+          .send({ status: "success", message: "deleted successfully" });
+      } else {
+        res.status(404).send({ status: "success", message: "not found" });
+      }
+    } catch (error) {
       res.status(400).send({
         status: "Bad Request",
         deleteData: "",
-        message: "user already deleted...",
+        message: error.message,
       });
     }
   }
