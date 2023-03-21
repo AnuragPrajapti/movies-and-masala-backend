@@ -292,7 +292,8 @@ authrouter.delete(
 
       await user.save();
       res.status(200).send({ status: "success", message: "deleted successfully" });
-    } catch (error) {
+    }
+     catch (error) {
       res.status(400).send({
         status: "Bad Request",
         deleteData: "",
